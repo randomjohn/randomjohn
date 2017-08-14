@@ -28,6 +28,7 @@ copyright = "(c) RJS Data Science LLC"
     url = "https://twitter.com/randomjohn"
 
 [params]
+  title = "Upstate Data Analysis"
 	subtitle = "Showcasing data analysis in R using public data about Greenville/Spartanburg, SC by RJS Data Science"
 	[params.author]
 		name = "HPSTR"
