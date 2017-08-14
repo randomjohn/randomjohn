@@ -1,0 +1,40 @@
+baseurl = "http://randomjohn.netlify.com"
+languageCode = "en-gb"
+title = "Upstate Data Analysis"
+theme = "hpstr-hugo-theme"
+pluralizelisttitles = false
+PygmentsCodeFences = true
+Paginate = 5
+disqusShortname = "randomjohn"
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+googleAnalytics = "88844885"
+twitter = "@randomjohn"
+copyright = "(c) RJS Data Science LLC"
+
+[permalinks]
+    post = "/:year/:month/:day/:slug/"
+
+[[menu.main]]
+    name = "About"
+    url = "/content/about/"
+[[menu.main]]
+    name = "Blogroll"
+    url = "/content/blogroll/"
+[[menu.main]]
+    name = "GitHub"
+    url = "https://github.com/randomjohn"
+[[menu.main]]
+    name = "Twitter"
+    url = "https://twitter.com/randomjohn"
+
+[params]
+	subtitle = "Showcasing data analysis in R using public data about Greenville/Spartanburg, SC by RJS Data Science"
+	[params.author]
+		name = "HPSTR"
+		avatar = "/images/avatar.jpg"
+		bio = "An elegant, responsive theme for Hugo"
+		github = "dldx/hpstr-hugo-theme"
+	[params.image]
+	  feature = "/images/abstract-1.jpg"
+	  credit = "dargadgetz"
+	  creditlink = "http://www.dargadgetz.com/ios-7-abstract-wallpaper-pack-for-iphone-5-and-ipod-touch-retina/"
