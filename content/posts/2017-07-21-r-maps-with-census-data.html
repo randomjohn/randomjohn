@@ -1,0 +1,314 @@
+---
+title: How to make maps with Census data in R
+author: John Johnson
+date: '2017-08-13'
+categories:
+  - Greenville
+tags:
+  - ggplot
+  - maps
+slug: content/post/2017-07-21-r-maps-with-census-data
+---
+
+
+
+<div id="us-census-data" class="section level2">
+<h2>US Census Data</h2>
+<p>The US Census collects a number of demographic measures and publishes aggregate data through its website. There are several ways to use Census data in R, from the <a href="https://www.census.gov/developers/">Census API</a> to the <a href="https://www.jstatsoft.org/article/view/v037i06">USCensus2010</a> package. If you are interested in geopolitical data in the US, I recommend exploring both these options - the Census API requires a key for each person who uses it, and the package requires downloading a very large dataset. The setups for both require some effort, but once that effort is done you don’t have to do it again.</p>
+<p>The <code>acs</code> package in R allows you to access the Census API easily. I highly recommend checking it out, and that’s the method we will use here. Note that I’ve already defined the variable <code>api_key</code> - if you are trying to run this code you will need to first run something like <code>api_key &lt;- &lt;enter your Census API key&gt;</code> before running the rest of this code.</p>
+<pre class="r"><code>library(acs)
+api.key.install(key=api_key) # now you are ready to run the rest of the acs code</code></pre>
+<p>For purposes here, we will use the toy example of plotting median household income by county for every county in South Carolina. First, we obtain the Census data. The first command gives us the table and variable names of what we want. I then use that table number in the <code>acs.fetch</code> command to get the variable I want.</p>
+<pre class="r"><code>acs.lookup(endyear=2015, span=5,dataset=&quot;acs&quot;, keyword= c(&quot;median&quot;,&quot;income&quot;,&quot;family&quot;,&quot;total&quot;), case.sensitive=F)</code></pre>
+<pre><code>## An object of class &quot;acs.lookup&quot;
+## endyear= 2015  ; span= 5 
+## 
+## results:
+##    variable.code table.number
+## 1     B10010_001       B10010
+## 2     B19126_001       B19126
+## 3     B19126_002       B19126
+## 4     B19126_005       B19126
+## 5     B19126_006       B19126
+## 6     B19126_009       B19126
+## 7     B19215_001       B19215
+## 8     B19215_002       B19215
+## 9     B19215_003       B19215
+## 10    B19215_006       B19215
+## 11    B19215_009       B19215
+## 12    B19215_010       B19215
+## 13    B19215_013       B19215
+##                                                                                                                                                          table.name
+## 1                                                                  Median Family Income for Families with GrndPrnt Householders Living With Own GrndChldrn &lt; 18 Yrs
+## 2                 B19126. Median Family Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Family Type by Presence of Own Children Under 18 Years
+## 3                 B19126. Median Family Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Family Type by Presence of Own Children Under 18 Years
+## 4                 B19126. Median Family Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Family Type by Presence of Own Children Under 18 Years
+## 5                 B19126. Median Family Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Family Type by Presence of Own Children Under 18 Years
+## 6                 B19126. Median Family Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Family Type by Presence of Own Children Under 18 Years
+## 7  B19215. Median Nonfamily Household Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Sex of Householder by Living Alone by Age of Householder
+## 8  B19215. Median Nonfamily Household Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Sex of Householder by Living Alone by Age of Householder
+## 9  B19215. Median Nonfamily Household Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Sex of Householder by Living Alone by Age of Householder
+## 10 B19215. Median Nonfamily Household Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Sex of Householder by Living Alone by Age of Householder
+## 11 B19215. Median Nonfamily Household Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Sex of Householder by Living Alone by Age of Householder
+## 12 B19215. Median Nonfamily Household Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Sex of Householder by Living Alone by Age of Householder
+## 13 B19215. Median Nonfamily Household Income in the Past 12 Months (in 2015 Inflation-Adjusted Dollars) by Sex of Householder by Living Alone by Age of Householder
+##                                                                                                                                                variable.name
+## 1                                                                                                        Median family income in the past 12 months-- Total:
+## 2                                                                  Median family income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Total:
+## 3                                          Median family income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Married-couple family -- Total
+## 4                                                   Median family income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Other family -- Total
+## 5              Median family income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Other family -- Male householder, no wife present -- Total
+## 6         Median family income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Other family -- Female householder, no husband present -- Total
+## 7                                           Median nonfamily household income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Total (dollars):
+## 8                        Median nonfamily household income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Male householder -- Total (dollars)
+## 9        Median nonfamily household income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Male householder -- Living alone -- Total (dollars)
+## 10   Median nonfamily household income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Male householder -- Not living alone -- Total (dollars)
+## 11                     Median nonfamily household income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Female householder -- Total (dollars)
+## 12     Median nonfamily household income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Female householder -- Living alone -- Total (dollars)
+## 13 Median nonfamily household income in the past 12 months (in 2015 Inflation-adjusted dollars) -- Female householder -- Not living alone -- Total (dollars)</code></pre>
+<pre class="r"><code>my_cnty &lt;- geo.make(state = 45,county = &quot;*&quot;)
+home_median_price&lt;-acs.fetch(geography=my_cnty, table.number=&quot;B19126&quot;,endyear=2015) # home median prices</code></pre>
+<pre><code>## Warning in acs.fetch(endyear = endyear, span = span, geography =
+## geography[[1]], : NAs introduced by coercion</code></pre>
+<pre class="r"><code>knitr::kable(head(home_median_price@estimate))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">B19126_001</th>
+<th align="right">B19126_002</th>
+<th align="right">B19126_003</th>
+<th align="right">B19126_004</th>
+<th align="right">B19126_005</th>
+<th align="right">B19126_006</th>
+<th align="right">B19126_007</th>
+<th align="right">B19126_008</th>
+<th align="right">B19126_009</th>
+<th align="right">B19126_010</th>
+<th align="right">B19126_011</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Abbeville County, South Carolina</td>
+<td align="right">44918</td>
+<td align="right">55141</td>
+<td align="right">65664</td>
+<td align="right">50698</td>
+<td align="right">24835</td>
+<td align="right">43187</td>
+<td align="right">50347</td>
+<td align="right">24886</td>
+<td align="right">22945</td>
+<td align="right">18101</td>
+<td align="right">29958</td>
+</tr>
+<tr class="even">
+<td>Aiken County, South Carolina</td>
+<td align="right">57396</td>
+<td align="right">70829</td>
+<td align="right">72930</td>
+<td align="right">70446</td>
+<td align="right">29302</td>
+<td align="right">36571</td>
+<td align="right">35469</td>
+<td align="right">37906</td>
+<td align="right">27355</td>
+<td align="right">22760</td>
+<td align="right">34427</td>
+</tr>
+<tr class="odd">
+<td>Allendale County, South Carolina</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>Anderson County, South Carolina</td>
+<td align="right">53169</td>
+<td align="right">65881</td>
+<td align="right">75444</td>
+<td align="right">60166</td>
+<td align="right">26608</td>
+<td align="right">36694</td>
+<td align="right">37254</td>
+<td align="right">36297</td>
+<td align="right">24384</td>
+<td align="right">17835</td>
+<td align="right">29280</td>
+</tr>
+<tr class="odd">
+<td>Bamberg County, South Carolina</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>Barnwell County, South Carolina</td>
+<td align="right">44224</td>
+<td align="right">59467</td>
+<td align="right">70542</td>
+<td align="right">54030</td>
+<td align="right">19864</td>
+<td align="right">25143</td>
+<td align="right">18633</td>
+<td align="right">45714</td>
+<td align="right">18317</td>
+<td align="right">13827</td>
+<td align="right">21315</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="plotting-the-map-data" class="section level2">
+<h2>Plotting the map data</h2>
+<p>If you have the <code>maps</code> and <code>ggplot2</code> packages, you already have the data you need to plot. We use the <code>map_data</code> function from <code>ggplot2</code> to pull in county shape data for South Carolina. (A previous attempt at this blogpost had used the <code>ggmap</code> package, but there is an incompatibility between that and the latest <code>ggplot2</code> package at the time of this writing.)</p>
+<pre class="r"><code>library(ggplot2)
+sc_map &lt;- map_data(&quot;county&quot;,region=&quot;south.carolina&quot;)
+ggplot() + geom_polygon(aes(x=long,y=lat,group=group),data=sc_map,colour=&quot;white&quot;,fill=&quot;black&quot;) + theme_minimal()</code></pre>
+<p><img src="/post/2017-07-21-r-maps-with-census-data_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+<div id="merging-the-demographic-and-map-data" class="section level2">
+<h2>Merging the demographic and map data</h2>
+<p>Now we have the demographic data and the map, but merging the two will take a little effort. The reason is that the map data gives a lower case representation of the county and calls it a “subregion”, while the Census data returns the county as “xxxx County, South Carolina”. I use the <code>dplyr</code> and <code>stringr</code> packages (for <code>str_replace</code>) to make short work of this merge.</p>
+<pre class="r"><code>library(dplyr)
+library(stringr)
+ 
+merged &lt;- as.data.frame(home_median_price@estimate) %&gt;% 
+  mutate(county_full = rownames(.),
+         county = str_replace(county_full,&quot;(.+) County.*&quot;,&quot;\\1&quot;) %&gt;% tolower) %&gt;% 
+  select(county,B19126_001) %&gt;% 
+  rename(med_income=B19126_001) %&gt;% 
+  right_join(sc_map,by=c(&quot;county&quot;=&quot;subregion&quot;))
+ 
+knitr::kable(head(merged,10))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">county</th>
+<th align="right">med_income</th>
+<th align="right">long</th>
+<th align="right">lat</th>
+<th align="right">group</th>
+<th align="right">order</th>
+<th align="left">region</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.24809</td>
+<td align="right">34.41758</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="even">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.31685</td>
+<td align="right">34.35455</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="odd">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.31111</td>
+<td align="right">34.33163</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="even">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.31111</td>
+<td align="right">34.29152</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="odd">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.28247</td>
+<td align="right">34.26860</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="even">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.25955</td>
+<td align="right">34.25142</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="odd">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.24809</td>
+<td align="right">34.21131</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="even">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.23663</td>
+<td align="right">34.18266</td>
+<td align="right">1</td>
+<td align="right">8</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="odd">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.24236</td>
+<td align="right">34.15401</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="left">south carolina</td>
+</tr>
+<tr class="even">
+<td align="left">abbeville</td>
+<td align="right">44918</td>
+<td align="right">-82.27674</td>
+<td align="right">34.10818</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="left">south carolina</td>
+</tr>
+</tbody>
+</table>
+<p>It’s now a simple matter to plot this merged dataset. In fact, we only have to tweak a few things from the first time we plotted the map data.</p>
+<pre class="r"><code>ggplot() + geom_polygon(aes(x=long,y=lat,group=group,fill=med_income),data=merged) + theme_minimal()</code></pre>
+<p><img src="/post/2017-07-21-r-maps-with-census-data_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>It’s pretty easy to plot U.S. Census data on a map. The real power of Census data comes not just from plotting it, but combining with other geographically-based data (such as crime). The <code>acs</code> package in R makes it easy to obtain Census data, which can then be merged with other data using packages such as <code>dplyr</code> and <code>stringr</code> and then plotted with <code>ggplot2</code>. Hopefully the authors of the <code>ggmap</code> and <code>ggplot2</code> packages can work out their incompatibilities so that the above maps can be created using the Google API map or open street maps.</p>
+<p>It should be noted that while I obtained county-level information, aggregate data can be obtained at Census block and tract levels as well, if you are looking to do some sort of localized analysis.</p>
+</div>

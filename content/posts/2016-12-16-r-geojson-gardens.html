@@ -1,0 +1,65 @@
+---
+title: Plotting GeoJSON polygons on a map with R
+author: John Johnson
+date: '2017-08-13'
+categories:
+  - Greenville
+tags:
+  - ggplot
+  - geojson
+  - maps
+slug: content/post/2016-12-16-r-geojson-gardens
+---
+
+
+
+<p>In a <a href="2016-12-11-r-geojson-srt.html">previous post</a> we plotted some points, retrieved from a public dataset in GeoJSON format, on top of a Google Map of the area surrounding Greenville, SC. In this post we plot some public data in GeoJSON format as well, but instead of particular points, we plot polygons. Polygons describe an area rather than a single point. As before, to set up we do the following:</p>
+<pre class="r"><code>library(rgdal)
+if (!require(geojsonio)) {
+    install.packages(&quot;geojsonio&quot;)
+    library(geojsonio)
+}
+library(sp)
+library(maps)
+library(ggmap)
+library(maptools)</code></pre>
+<div id="getting-the-data" class="section level2">
+<h2>Getting the data</h2>
+<p>The data we are going to analyze consists of the city parks in Greenville, SC. Though this data is located in an ArcGIS system, there is a <a href="https://data.openupstate.org/maps/city-parks/parks.php">GeoJSON version</a> at <a href="http://data.openupstate.org">OpenUpstate</a>.</p>
+<pre class="r"><code>data_url &lt;- &quot;https://data.openupstate.org/maps/city-parks/parks.php&quot;
+data_file &lt;- &quot;parks.geojson&quot;
+# for some reason, I can&#39;t read from the url directly, though the tutorial
+# says I can
+download.file(data_url, data_file)
+data_park &lt;- geojson_read(data_file, what = &quot;sp&quot;)</code></pre>
+</div>
+<div id="analyzing-the-data" class="section level2">
+<h2>Analyzing the data</h2>
+<p>First, we plot the data as before:</p>
+<pre class="r"><code>plot(data_park)</code></pre>
+<p><img src="/post/2016-12-16-r-geojson-gardens_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>While this was easy to do, it doesn’t give very much context. However, it does give the boundaries of the different parks. As before, we use the <code>ggmap</code> and <code>ggplot2</code> package to give us some context. First, we download from Google the right map.</p>
+<pre class="r"><code>mapImage &lt;- ggmap(get_googlemap(c(lon = -82.394012, lat = 34.852619), scale = 1, 
+    zoom = 11), extent = &quot;normal&quot;)</code></pre>
+<p>I got the latitude and longitude by looking up on Google, and then hand-tuned the scale and zoom.</p>
+<p>A note of warning: if you do this with a recent version of <code>ggmap</code> and <code>ggplot2</code>, you may need to download the GitHub versions. See this <a href="http://stackoverflow.com/questions/40642850/ggmap-error-geomrasterann-was-built-with-an-incompatible-version-of-ggproto/40644348">Stackoverflow thread</a> for details.</p>
+<p>Now, we prepare our spatial object for plotting. This is a more difficult process than before, and requires the use of the <code>fortify</code> command from <code>ggplot2</code> package to make sure everything makes it to the right format:</p>
+<pre class="r"><code>data_park_df &lt;- fortify(data_park)</code></pre>
+<p>Now we can make the plot:</p>
+<pre class="r"><code>print(mapImage + geom_polygon(aes(long, lat, group = group), data = data_park_df, 
+    colour = &quot;green&quot;))</code></pre>
+<p><img src="/post/2016-12-16-r-geojson-gardens_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Note the use of the <code>group=</code> option in the <code>geom_polygon</code> function above. This tells <code>geom_polygon</code> that there are many polygons rather than just one. Without that option, you get a big mess:</p>
+<pre class="r"><code>print(mapImage + geom_polygon(aes(long, lat), data = data_park_df, colour = &quot;green&quot;))</code></pre>
+<p><img src="/post/2016-12-16-r-geojson-gardens_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="mashup-of-parking-convenient-to-swamp-rabbit-trail-and-city-parks" class="section level2">
+<h2>Mashup of parking convenient to Swamp Rabbit Trail and city parks</h2>
+<p>Now, say you want to combine the city parks data with the parking places convenient to Swamp Rabbit Trail that was the subject of the last post. That is very easy using the <code>ggplot2</code> package. We get the data and manipulate it as last time:</p>
+<p>Next, we use the layering feature of <code>ggplot2</code> to draw the map:</p>
+<p><img src="/post/2016-12-16-r-geojson-gardens_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>We continue to explore public geographical data by examining data representing areas in addition to points. In addition, we layer data from two sources.</p>
+</div>
