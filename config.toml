@@ -1,6 +1,6 @@
 baseurl = "http://randomjohn.netlify.com"
 languageCode = "en-us"
-title = "RJS Data Science"
+title = "Upstate Data Analysis"
 theme = "hpstr-hugo-theme"
 pluralizelisttitles = false
 PygmentsCodeFences = true
@@ -8,8 +8,7 @@ Paginate = 5
 disqusShortname = "randomjohn"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 googleAnalytics = "88844885"
-twitter = "@rjsdatascience"
-github = "randomjohn"
+twitter = "@randomjohn"
 copyright = "(c) RJS Data Science LLC"
 
 
@@ -17,12 +16,12 @@ copyright = "(c) RJS Data Science LLC"
     post = "/:year/:month/:day/:slug/"
 
 [params]
-	subtitle = "Showcasing data analysis in R using public data about Greenville/Spartanburg, SC"
+	subtitle = "Showcasing data analysis in R using public data about Greenville/Spartanburg, SC by RJS Data Science"
 	[params.author]
 		name = "John Johnson"
 		avatar = "/images/Logo_square.png"
 		bio = "Statistician from Upstate South Carolina"
 		github = "randomjohn"
 	[params.image]
-	  feature = "/images/Logo.png"
+	  feature = "/images/Logo_bridge_only.png"
 	  credit = "John"
