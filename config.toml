@@ -1,6 +1,6 @@
 baseurl = "http://randomjohn.netlify.com"
 languageCode = "en-us"
-Title = "Upstate Data Analysis"
+title = "Upstate Data Analysis"
 theme = "hpstr-hugo-theme"
 pluralizelisttitles = false
 PygmentsCodeFences = true
@@ -15,7 +15,9 @@ copyright = "(c) RJS Data Science LLC"
 [permalinks]
     post = "/:year/:month/:day/:slug/"
 
-
+[data]
+  [data.sections]
+    Title = "foo"
 
 [params]
 	subtitle = "Showcasing data analysis in R using public data about Greenville/Spartanburg, SC by RJS Data Science"
