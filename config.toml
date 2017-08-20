@@ -15,8 +15,8 @@ copyright = "(c) RJS Data Science LLC"
 [permalinks]
     post = "/:year/:month/:day/:slug/"
 
-[data]
-  [data.sections]
+[Data]
+  [Data.sections]
     Title = "foo"
 
 [params]
