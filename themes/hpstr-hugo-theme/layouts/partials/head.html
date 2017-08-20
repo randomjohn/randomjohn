@@ -9,6 +9,8 @@
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
 {{ if .IsHome }}
     {{ $.Scratch.Set "Params" .Site.Params }}
+{{ else if .IsNode }}
+    {{ $.Scratch.Set "Params" (index .Site.Data.sections (lower .Title)) }}
 {{ else }}
     {{ $.Scratch.Set "Params" .Params }}
 {{ end }}
