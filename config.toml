@@ -1,6 +1,6 @@
 baseurl = "http://randomjohn.netlify.com"
-languageCode = "en-gb"
-title = "Upstate Data Analysis"
+languageCode = "en-us"
+Title = "Upstate Data Analysis"
 theme = "hpstr-hugo-theme"
 pluralizelisttitles = false
 PygmentsCodeFences = true
@@ -11,30 +11,19 @@ googleAnalytics = "88844885"
 twitter = "@randomjohn"
 copyright = "(c) RJS Data Science LLC"
 
+
 [permalinks]
     post = "/:year/:month/:day/:slug/"
 
-[[menu.main]]
-    name = "About"
-    url = "/content/about/"
-[[menu.main]]
-    name = "Blogroll"
-    url = "/content/blogroll/"
-[[menu.main]]
-    name = "GitHub"
-    url = "https://github.com/randomjohn"
-[[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/randomjohn"
+
 
 [params]
-  title = "Upstate Data Analysis"
 	subtitle = "Showcasing data analysis in R using public data about Greenville/Spartanburg, SC by RJS Data Science"
 	[params.author]
-		name = "HPSTR"
+		name = "John Johnson"
 		avatar = "/images/avatar.jpg"
-		bio = "An elegant, responsive theme for Hugo"
-		github = "dldx/hpstr-hugo-theme"
+		bio = "Statistician from Upstate South Carolina"
+		github = "randomjohn"
 	[params.image]
 	  feature = "/images/abstract-1.jpg"
 	  credit = "dargadgetz"
