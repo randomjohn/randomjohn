@@ -1,5 +1,5 @@
 [posts]
 	title = "All posts"
 [posts.image]
-          feature = "logo_bridge_only.png"
+          feature = "/images/logo_bridge_only.png"
           credit = "John"
