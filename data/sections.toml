@@ -1,4 +1,3 @@
-title = "Foo"
 [posts]
 	title = "All posts"
 [posts.image]
