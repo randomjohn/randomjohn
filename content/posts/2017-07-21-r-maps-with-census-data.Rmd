@@ -33,7 +33,7 @@ For purposes here, we will use the toy example of plotting median household inco
 acs.lookup(endyear=2015, span=5,dataset="acs", keyword= c("median","income","family","total"), case.sensitive=F)
 my_cnty <- geo.make(state = 45,county = "*")
 home_median_price<-acs.fetch(geography=my_cnty, table.number="B19126",endyear=2015) # home median prices
-knitr::kable(head(home_median_price@estimate))
+head(home_median_price@estimate)
  
 ```
  
@@ -44,8 +44,10 @@ If you have the `maps` and `ggplot2` packages, you already have the data you nee
  
 ```{r}
 library(ggplot2)
+library(ggthemes) # for theme_map
 sc_map <- map_data("county",region="south.carolina")
-ggplot() + geom_polygon(aes(x=long,y=lat,group=group),data=sc_map,colour="white",fill="black") + theme_minimal()
+ggplot() + geom_polygon(aes(x=long,y=lat,group=group),data=sc_map,colour="white",fill="black") + 
+  theme_map()
 ```
  
 ## Merging the demographic and map data
@@ -63,13 +65,13 @@ merged <- as.data.frame(home_median_price@estimate) %>%
   rename(med_income=B19126_001) %>% 
   right_join(sc_map,by=c("county"="subregion"))
  
-knitr::kable(head(merged,10))
+head(merged,10)
 ```
  
 It's now a simple matter to plot this merged dataset. In fact, we only have to tweak a few things from the first time we plotted the map data.
  
 ```{r}
-ggplot() + geom_polygon(aes(x=long,y=lat,group=group,fill=med_income),data=merged) + theme_minimal()
+ggplot() + geom_polygon(aes(x=long,y=lat,group=group,fill=med_income),data=merged) + theme_map()
 ```
  
 ## Discussion
