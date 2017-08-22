@@ -1,6 +1,6 @@
-baseurl = "http://randomjohn.netlify.com"
+baseurl = "http://www.rjsdatascience.com"
 languageCode = "en-us"
-title = "Upstate Data Analysis"
+title = "RJS Data Science"
 theme = "hpstr-hugo-theme"
 pluralizelisttitles = false
 PygmentsCodeFences = true
@@ -20,7 +20,7 @@ copyright = "(c) RJS Data Science LLC"
 	[params.author]
 		name = "John Johnson"
 		avatar = "/images/Logo_square.png"
-		bio = "Statistician from Upstate South Carolina"
+		bio = "Statistics and Data Science Consultant in Upstate South Carolina"
 		github = "randomjohn"
 	[params.image]
 	  feature = "/images/Logo_bridge_only.png"

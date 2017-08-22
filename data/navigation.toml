@@ -6,3 +6,7 @@ url = "/about/"
 [[links]]
 title = "Blogroll"
 url = "/content/blogroll/"
+
+[[links]]
+title = "Categories"
+url = "/categories/"
